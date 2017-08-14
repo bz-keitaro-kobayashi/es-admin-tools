@@ -85,7 +85,16 @@ for index in process_indices:
     }
   }
   print("  => shrink")
-  es.indices.shrink(index, target=shrunk_index, body=shrink_settings)
+  try:
+    es.indices.shrink(index, target=shrunk_index, body=shrink_settings)
+  except elasticsearch.exceptions.TransportError as e:
+    if e.error == 'illegal_state_exception':
+      print("  => shrink failed due to state exception. waiting 60s")
+      time.sleep(60)
+      print("  => shrink")
+      es.indices.shrink(index, target=shrunk_index, body=shrink_settings)
+    else:
+      raise e
   print("  => waiting...", end="", flush=True)
   es.cluster.health(shrunk_index,
     wait_for_status="yellow", timeout="300s")
