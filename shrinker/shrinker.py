@@ -5,7 +5,7 @@ import re
 import time
 from pprint import pprint
 
-from elasticsearch import Elasticsearch
+import elasticsearch
 
 endpoint = sys.argv[1]
 work_node = sys.argv[2]
@@ -15,7 +15,7 @@ tgt_num_of_replicas = int(sys.argv[5])
 
 (host, port) = endpoint.split(':')
 
-es = Elasticsearch(
+es = elasticsearch.Elasticsearch(
   [
     {'host': host, 'port': port, 'timeout': 310}
   ]
