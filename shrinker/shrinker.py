@@ -66,10 +66,10 @@ for index in process_indices:
   es.indices.put_settings(body=prepare_settings, index=index)
   print("  => waiting to relocate...", end="", flush=True)
   es.cluster.health(index,
-    wait_for_no_relocating_shards=True, wait_for_status="green", timeout="30s")
+    wait_for_no_relocating_shards=True, wait_for_status="yellow", timeout="30s")
   time.sleep(1)
   es.cluster.health(index,
-    wait_for_no_relocating_shards=True, wait_for_status="green", timeout="60s")
+    wait_for_no_relocating_shards=True, wait_for_status="yellow", timeout="60s")
   print(" ok")
 
   shrunk_index = "shrunk-%s" % index
