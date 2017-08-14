@@ -12,7 +12,13 @@ pattern = sys.argv[3]
 tgt_num_of_shards = int(sys.argv[4])
 tgt_num_of_replicas = int(sys.argv[5])
 
-es = Elasticsearch([endpoint], timeout=120)
+(host, port) = endpoint.split(':')
+
+es = Elasticsearch(
+  [
+    {'host': host, 'port': port, 'timeout': 310}
+  ]
+)
 
 indices = es.cat.indices(index=pattern, format="json")
 
@@ -58,7 +64,8 @@ for index in process_indices:
   print("  => put_settings")
   es.indices.put_settings(body=prepare_settings, index=index)
   print("  => waiting to relocate...", end="")
-  es.cluster.health(index, wait_for_no_relocating_shards=True, master_timeout=300, timeout=300)
+  es.cluster.health(index,
+    wait_for_no_relocating_shards=True, timeout="300s")
   print(" ok")
 
   shrunk_index = "shrunk-%s" % index
@@ -72,7 +79,8 @@ for index in process_indices:
   print("  => shrink")
   es.indices.shrink(index, target=shrunk_index, body=shrink_settings)
   print("  => waiting...", end="")
-  es.cluster.health(shrunk_index, wait_for_status="yellow", master_timeout=300, timeout=300)
+  es.cluster.health(shrunk_index,
+    wait_for_status="yellow", timeout="300s")
   print(" ok")
 
   print("  => shrink done; proceeding with alias")
