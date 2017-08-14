@@ -64,7 +64,7 @@ for index in process_indices:
   }
   print("  => put_settings")
   es.indices.put_settings(body=prepare_settings, index=index)
-  print("  => waiting to relocate...", end="")
+  print("  => waiting to relocate...", end="", flush=True)
   es.cluster.health(index,
     wait_for_no_relocating_shards=True, wait_for_status="green", timeout="30s")
   time.sleep(1)
@@ -82,7 +82,7 @@ for index in process_indices:
   }
   print("  => shrink")
   es.indices.shrink(index, target=shrunk_index, body=shrink_settings)
-  print("  => waiting...", end="")
+  print("  => waiting...", end="", flush=True)
   es.cluster.health(shrunk_index,
     wait_for_status="yellow", timeout="300s")
   print(" ok")
