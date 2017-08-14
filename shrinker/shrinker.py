@@ -55,7 +55,7 @@ for index in process_indices:
     'index.routing.allocation.require._name': work_node,
     'index.blocks.write': True
   }
-  print("  => put_settings" % index)
+  print("  => put_settings")
   es.indices.put_settings(body=prepare_settings, index=index)
   print("  => waiting to relocate...", end="")
   es.cluster.health(index, wait_for_no_relocating_shards=True, master_timeout=300, timeout=300)
