@@ -2,6 +2,7 @@
 
 import sys
 import re
+import time
 from pprint import pprint
 
 from elasticsearch import Elasticsearch
@@ -65,7 +66,10 @@ for index in process_indices:
   es.indices.put_settings(body=prepare_settings, index=index)
   print("  => waiting to relocate...", end="")
   es.cluster.health(index,
-    wait_for_no_relocating_shards=True, timeout="300s")
+    wait_for_no_relocating_shards=True, wait_for_status="green", timeout="30s")
+  time.sleep(1)
+  es.cluster.health(index,
+    wait_for_no_relocating_shards=True, wait_for_status="green", timeout="60s")
   print(" ok")
 
   shrunk_index = "shrunk-%s" % index
